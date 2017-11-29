@@ -28,18 +28,17 @@ test -e /var/lib/presto && rm -rf /var/lib/presto
 
 mkdir -p /var/lib/presto
 chmod -R 777 /var/lib/presto/
+cd /var/lib/presto
+wget https://github.com/papalukg/presto-hdinsight/archive/master.tar.gz -O presto-hdinsight.tar.gz
+tar xzf presto-hdinsight.tar.gz
+cd presto-hdinsight-master
+./createconfigs.sh $VERSION "${1:-}"
+cp wasb-site.xml /etc/hadoop/conf/
 
 
 if [[ $(hostname -s) = hn0-* ]]; then 
-  apt-get update
-  which mvn &> /dev/null || apt-get -y -qq install maven
-  cd /var/lib/presto
-  wget https://github.com/papalukg/presto-hdinsight/archive/master.tar.gz -O presto-hdinsight.tar.gz
-  tar xzf presto-hdinsight.tar.gz
-  cd presto-hdinsight-master
   wget https://prestohdi.blob.core.windows.net/build/presto-yarn-package.zip -P build/
   slider package --install --name presto1 --package build/presto-yarn-package.zip --replacepkg $yarn_rm_address $fs
-  ./createconfigs.sh $VERSION "${1:-}"
   slider resource --install --destdir /etc/hadoop/conf/ --resource wasb-site.xml --overwrite $yarn_rm_address
   slider exists presto1 --live $yarn_rm_address $fs && slider stop presto1 --force $yarn_rm_address $fs
   slider exists presto1 $yarn_rm_address $fs && slider destroy presto1 --force $yarn_rm_address $fs
