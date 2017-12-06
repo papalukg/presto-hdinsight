@@ -37,7 +37,7 @@ cp wasb-site.xml /etc/hadoop/conf/
 
 
 if [[ $(hostname -s) = hn0-* ]]; then 
-  wget https://raw.githubusercontent.com/papalukg/presto-hdinsight/master/presto-yarn-package.zip -P build/
+  wget https://www.dropbox.com/s/x4gp1uj0rokxp4x/presto-yarn-package.zip?dl=0 -O build/presto-yarn-package.zip
   slider package --install --name presto1 --package build/presto-yarn-package.zip --replacepkg $yarn_rm_address $fs
   slider exists presto1 --live $yarn_rm_address $fs && slider stop presto1 --force $yarn_rm_address $fs
   slider exists presto1 $yarn_rm_address $fs && slider destroy presto1 --force $yarn_rm_address $fs
